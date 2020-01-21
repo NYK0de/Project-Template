@@ -1,0 +1,73 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+
+apply from: '../config/functions.gradle'
+apply from: '../config/versions.gradle'
+
+android {
+    signingConfigs {
+        defaultSign
+    }
+
+    generateSignature()
+
+    compileSdkVersion 28
+    defaultConfig {
+        applicationId "com.developer.templateproject"
+        minSdkVersion 26
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        multiDexEnabled = true
+    }
+    buildTypes {
+        applicationVariants.all {
+            variant ->
+                variant.buildConfigField STRING, URL_API, getCustomProperty(URL_API)
+        }
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.defaultSign
+            buildConfigField BOOLEAN, DEBUG_MODE, TRUE
+        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField BOOLEAN, DEBUG_MODE, FALSE
+        }
+    }
+    dataBinding {
+        enabled = true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation deps.androidx_appcompat
+
+    implementation deps.androidx_legacy
+    implementation deps.constraint_layout
+    implementation deps.recycler_view
+    implementation deps.support_design
+
+    testImplementation deps.junits
+    androidTestImplementation deps.test_runner
+    androidTestImplementation deps.espresso_core
+
+    implementation deps.kotlin_core
+    implementation deps.lifecycle
+    implementation deps.kotlin_stdlib
+
+    implementation deps.anko
+
+}
+repositories {
+    mavenCentral()
+}
